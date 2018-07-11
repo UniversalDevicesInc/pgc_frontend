@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <span class="navbar-brand" href="#">Polyglot Cloud</span>
+    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" data-target="#navbar"
+            [attr.aria-expanded]="!isCollapsed" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse" id="navbar" [ngbCollapse]="isCollapsed">
+      <ul class="nav mr-auto">
+        <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions] = "{exact:true}">
+          <a class="nav-link" [routerLink]="['/']" (click)="navbarCollapsed = true">Home</a>
+        </li>
+      </ul>
+      <ul class="nav ml-auto">
+        <li *ngIf="authService.loggedIn()" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
+          <a class="nav-link" [routerLink]="['/dashboard']" (click)="isCollapsed = !isCollapsed">Dashboard</a>
+        </li>
+        <li *ngIf="authService.loggedIn()" class="nav-item">
+          <div ngbDropdown>
+            <span class="nav-link text-light" id="nsMenu" ngbDropdownToggle>NodeServers</span>
+            <div ngbDropdownMenu aria-labelledby="nsMenu">
+              <button class="dropdown-item">Action - 1</button>
+              <button class="dropdown-item">Another Action</button>
+              <button class="dropdown-item">Something else is here</button>
+            </div>
+          </div>
+        </li>
+        <li *ngIf="authService.loggedIn() && !environment.production" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
+          <a class="nav-link" [routerLink]="['/log']" (click)="isCollapsed = !isCollapsed">Log</a>
+        </li>
+        <li *ngIf="!authService.loggedIn()" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
+          <a class="nav-link" (click)="authService.login()" href="#">Login</a>
+        </li>
+        <li *ngIf="authService.loggedIn()" class="nav-item">
+          <a class="nav-link" (click)="authService.logout()" href="#">Logout {{username}}</a>
+        </li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!-- container -->
+</nav>

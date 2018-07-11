@@ -1,0 +1,20 @@
+<div style="text-align: center;">
+  <h6>Debug Logs(Frontend only)</h6>
+  <!-- <button onclick="window.scrollTo(0,document.body.scrollHeight)" class="btn btn-default">Scroll to Bottom</button> -->
+  <button (click)="scrollToBottom()" class="btn btn-primary">Scroll to Bottom</button>
+  <!-- <button (click)="settingsService.downloadLog('polyglot')" class="btn btn-default">Download Log</button> -->
+  <div>
+    <label>
+      <input name="autoScrollSwitch" type="checkbox" [(ngModel)]="autoScroll" [checked]="autoScroll">
+      AutoScroll
+    </label>
+  </div>
+</div><br />
+<div class="card card-body" style="height: 60vh">
+  <pre #logScroll style="overflow-x:auto; overflow-y:auto; height: 96%;">
+    <div id='log' *ngFor="let message of logService.logs" class="small">{{message}}</div>
+  </pre>
+</div><br />
+<div style="text-align: center;">
+  <button (click)="scrollToTop()" class="btn btn-primary">Scroll to Top</button>
+</div><br />

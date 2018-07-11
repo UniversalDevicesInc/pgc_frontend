@@ -1,0 +1,14 @@
+<div class="jumbotron text-center">
+  <h1>Polyglot Cloud</h1>
+  <p class="lead">UDI's NodeServer Integration Platform for the ISY device.<br /></p>
+  <div *ngIf="!authService.loggedIn()">
+    <br /><br />
+    <a class="btn btn-default" (click)="authService.login()">Login</a>
+    <p>You must first authenticate with the ISY Portal. Click login to link your account.</p>
+  </div>
+  <div *ngIf="authService.loggedIn()">
+    <br /><br />
+    <span class="btn btn-default text-light" (click)="refreshClick()">Refresh Tokens</span>
+    <span class="btn btn-default text-light" (click)="urlClick()">GetUrl</span>
+  </div>
+</div>
