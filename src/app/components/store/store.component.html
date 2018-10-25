@@ -1,0 +1,40 @@
+<div style="text-align: center;">
+  <h1>Polyglot NodeServer Store</h1>
+  <h4 *ngIf="nsList">Current NodeServers: <span style="vertical-align: top" class="badge badge-primary">{{nsList.length}}</span></h4>
+  <button (click)=getStore() class="btn btn-primary">Refresh</button>
+  <!-- <button (click)=addNS() class="btn btn-default">Add New NodeServer</button> -->
+</div><br />
+
+<div *ngIf="received">
+  <table class="table table-striped table-bordered table-hover">
+    <thead>
+      <tr>
+        <th width="10%">Name</th>
+        <th width="5%">Version</th>
+        <th width="10%">Author</th>
+        <th width="6%">Language</th>
+        <th width="62%">Description</th>
+        <th width="7%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ns of nsList; let i = index"  [class.active]="i == selectedRow" text-align="center">
+        <td style="vertical-align:middle"><a href={{ns.url}}>{{ns.name}}</a></td>
+        <td style="vertical-align:middle">{{ns.version}}</td>
+        <td style="vertical-align:middle">{{ns.author}}</td>
+        <td style="vertical-align:middle">{{ns.language}}</td>
+        <td style="vertical-align:middle">{{ns.desc}}</td>
+        <td style="text-align: center; vertical-align:middle; margin: auto;">
+          <button (click)=openModal(ns) class="btn btn-primary btn-sm">Install</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<ngx-spinner
+bdColor = "rgba(51, 51, 51, 0.8)"
+size = "medium"
+color = "#fff"
+type = "ball-clip-rotate-pulse">
+  <p style="font-size: 20px; color: white">Getting installable NodeServer list from Store. Standby....</p>
+</ngx-spinner>

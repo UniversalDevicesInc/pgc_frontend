@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <h4 class="modal-title text-white">{{title}}</h4>
+  <button type="button" class="close" aria-label="Close"
+   (click)="activeModal.close(false)">
+   <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div style="text-align: center;">
+    <button (click)="scrollToBottom()" class="btn btn-primary">Scroll to Bottom</button>
+    <button (click)="scrollToTop()" class="btn btn-primary">Scroll to Top</button>
+    <div>
+      <label>
+        <input name="autoScrollSwitch" type="checkbox" [(ngModel)]="autoScroll" [checked]="autoScroll">
+        AutoScroll
+      </label>
+    </div>
+  </div><br />
+  <div class="well well-sm" style="height: 75vh; overflow-y: auto;">
+    <pre #nslogScroll style="overflow-y:auto; height: 96%">
+      <div *ngFor="let data of nsLog">{{data}}</div>
+    </pre>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" (click)="confirm()">Close</button>
+</div>

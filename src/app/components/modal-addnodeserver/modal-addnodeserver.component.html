@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h4 class="modal-title text-white">{{title}}</h4>
+    <button type="button" class="close" aria-label="Close"
+     (click)="activeModal.close(false)">
+     <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div [innerHtml]="body | safe: 'html'"></div><br>
+    <h6 class="text-white">Select Slot Number:</h6>
+    <label>Select Available Slot</label><br>
+    <select (change)="onSelect($event.target.value)" type="button" class="btn btn-default dropdown-toggle btn-block">
+        <option *ngFor="let num of settingsService.availableNodeServerSlots" [value]="num">
+            {{num}}
+        </option>
+    </select>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" (click)="confirm()">Confirm</button>
+    <button class="btn btn-primary" (click)="cancel()">Cancel</button>
+  </div>
+  
