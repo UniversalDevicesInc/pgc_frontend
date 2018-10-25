@@ -1,12 +1,17 @@
 <footer class="footer">
+  <br>
   <div *ngIf="authService.loggedIn()" class="container text-center">
     <div class="card" style="max-width:800px;margin-left:auto; margin-right:auto;">
         <div class="card-body">
-          <p align="center">Logged in as: <b>{{username}}</b>
-            <!-- <br />ISY Version: <b>{{isyVersion}}</b> -->
-            <br>(c) 2018 UDI<br>
-            <a href="https://github.com/UniversalDevicesInc/polyglot-v2/blob/master/README.md">Documentation</a><br>
-          </p>
+          <span align="center">
+            Logged in as: <b>{{username}}</b><br>
+          </span>
+          <span *ngIf="currentIsy">
+            Current ISY Alias: <b>{{currentIsy.alias}}</b><br>
+            UUID: <b>{{currentIsy.id}}</b><br>
+            Firmware Version: <b>{{currentIsy.isyData.firmware}}</b><br>
+          </span>
+          (c) 2018 UDI<br>
         </div>
     </div>
   </div>

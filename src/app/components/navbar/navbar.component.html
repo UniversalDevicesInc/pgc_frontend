@@ -9,22 +9,24 @@
     <div id="navbar" class="collapse navbar-collapse" id="navbar" [ngbCollapse]="isCollapsed">
       <ul class="nav mr-auto">
         <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions] = "{exact:true}">
-          <a class="nav-link" [routerLink]="['/']" (click)="navbarCollapsed = true">Home</a>
+          <a class="nav-link" [routerLink]="['/']" (click)="isCollapsed = true">Home</a>
         </li>
       </ul>
       <ul class="nav ml-auto">
         <li *ngIf="authService.loggedIn()" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
-          <a class="nav-link" [routerLink]="['/dashboard']" (click)="isCollapsed = !isCollapsed">Dashboard</a>
+          <a class="nav-link" [routerLink]="['/dashboard']" (click)="isCollapsed = !isCollapsed">{{dashboard}}</a>
         </li>
-        <li *ngIf="authService.loggedIn()" class="nav-item">
+        <li *ngIf="authService.loggedIn() && isys !== null" class="nav-item">
           <div ngbDropdown>
-            <span class="nav-link text-light" id="nsMenu" ngbDropdownToggle>NodeServers</span>
+            <span class="nav-link text-light" id="nsMenu" ngbDropdownToggle>ISYs</span>
             <div ngbDropdownMenu aria-labelledby="nsMenu">
-              <button class="dropdown-item">Action - 1</button>
-              <button class="dropdown-item">Another Action</button>
-              <button class="dropdown-item">Something else is here</button>
+              <button *ngFor="let isy of isys" class="dropdown-item" (click)="updateCurrentIsy(isy)">{{isy.alias}}</button>
+              <button class="dropdown-item" (click)="refreshIsys()">Refresh ISY's</button>
             </div>
           </div>
+        </li>
+        <li *ngIf="authService.loggedIn()" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
+          <a class="nav-link" [routerLink]="['/store']" (click)="isCollapsed = !isCollapsed">Store</a>
         </li>
         <li *ngIf="authService.loggedIn() && !environment.production" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
           <a class="nav-link" [routerLink]="['/log']" (click)="isCollapsed = !isCollapsed">Log</a>

@@ -5,7 +5,9 @@
 export const environment = {
   production: false,
   PG_URI: 'https://spark.3csolutions.net',
-};
+  STORE_URI: 'https://ig405kjyoi.execute-api.us-east-1.amazonaws.com/test',
+  STAGE: 'dev'
+}
 
 /*
  * In development mode, to ignore zone related error stack frames such as

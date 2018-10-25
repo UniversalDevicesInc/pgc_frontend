@@ -1,14 +1,48 @@
-<div class="jumbotron text-center">
-  <h1>Polyglot Cloud</h1>
-  <p class="lead">UDI's NodeServer Integration Platform for the ISY device.<br /></p>
-  <div *ngIf="!authService.loggedIn()">
-    <br /><br />
-    <a class="btn btn-default" (click)="authService.login()">Login</a>
-    <p>You must first authenticate with the ISY Portal. Click login to link your account.</p>
+<div class="container" *ngIf="currentIsy">
+  <h2 align=center class="text-white">{{currentIsy.alias}} NodeServers
+  <span *ngIf="currentIsy.isyOnline" class='badge badge-success'>Online</span>
+  <span *ngIf="!currentIsy.isyOnline" class='badge badge-danger'>Offline</span></h2>
+  <div *ngIf="objectKeys(nodeServers).length > 0" class="container">
+    <div class="row card-group">
+      <div *ngFor="let nodeServer of objectValues(nodeServers)" class="col-6">
+        <div *ngIf="nodeServer.type !== 'unmanaged'" class="mt-2">
+          <div class="card p-1 pt-2">
+              <h4 class="align-top" align="center" class="card-title">{{nodeServer.name}}({{nodeServer.profileNum}})</h4>
+              <p align="center" class="card-text">Current Status:
+                <span *ngIf="nodeServer.connected" class='badge badge-success'>Connected</span>
+                <span *ngIf="!nodeServer.connected" class='badge badge-danger'>Disconnected</span>
+              </p>
+              <div class="btn-group btn-group-justified py-0" role="group">
+                <button class="btn btn-primary btn-sm" (click)=details(nodeServer.profileNum) style="width: 50%" role="button">Details <span *ngIf="objectKeys(nodeServer.notices).length > 0" style="vertical-align: top" class="badge badge-info">New Messages!</span></button>
+                <button class="btn btn-primary btn-sm" (click)=showConfirm(nodeServer) style="width: 50%" role="button">Delete</button>
+              </div>
+          </div>
+        </div>
+        <div *ngIf="nodeServer.type === 'unmanaged'" class="mt-2">
+          <div class="card p-1 pt-2">
+            <div class="card-body px-1 py-1">
+              <h5 class="align-top py-0" align="center">{{nodeServer.name}}({{nodeServer.profileNum}})</h5>
+              <p align="center" class="py-0">Current Status: <span class='badge badge-primary'>Unmanaged</span></p>
+            </div>              
+              <div class="btn-group btn-group-justified py-0" role="group">
+                <button type="button" class="btn btn-primary btn-sm" style="width: 100%">No Details Available</button>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div *ngIf="authService.loggedIn()">
-    <br /><br />
-    <span class="btn btn-default text-light" (click)="refreshClick()">Refresh Tokens</span>
-    <span class="btn btn-default text-light" (click)="urlClick()">GetUrl</span>
+
+  <div *ngIf="objectKeys(nodeServers).length === 0" class="container">
+    <br>
+    <h6 class="text-center">No NodeServers installed. Maybe install one from the <a [routerLink]="['/store']">Store?</a></h6>
   </div>
 </div>
+
+<ngx-spinner
+bdColor = "rgba(51, 51, 51, 0.8)"
+size = "medium"
+color = "#fff"
+type = "ball-clip-rotate-pulse">
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>

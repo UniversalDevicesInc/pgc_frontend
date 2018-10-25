@@ -1,6 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { AuthService } from '../../services/auth.service'
+import { LoggerService } from '../../services/logger.service'
+import { MqttService } from '../../services/mqtt.service'
+import { SettingsService } from '../../services/settings.service'
 
 @Component({
   selector: 'app-footer',
@@ -10,14 +13,24 @@ import { AuthService } from '../../services/auth.service'
 export class FooterComponent implements OnInit, OnDestroy {
 
   username: string
+  currentIsy
 
   constructor(
-    public authService: AuthService
+    public authService: AuthService,
+    private loggerService: LoggerService,
+    public mqttService: MqttService,
+    private settingsService: SettingsService
   ) { }
 
   ngOnInit() {
+    this.authService.username.subscribe(username => this.username = username)
+    this.settingsService.currentIsy.subscribe(currentIsy => {
+      if (currentIsy !== null) {
+        this.currentIsy = currentIsy
+      }
+    })
     this.authService.getUsername()
-    this.authService.username.subscribe((username) => { this.username = username })
+    if (this.authService.loggedIn()) { this.mqttService.start() }
   }
 
   ngOnDestroy() {

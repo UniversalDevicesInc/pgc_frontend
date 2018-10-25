@@ -9,6 +9,8 @@ import { LoggerService } from '../../services/logger.service';
 export class LogComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('logScroll') private logScrollContainer: ElementRef;
 
+  autoScroll
+
   constructor(
     public logService: LoggerService
   ) { }

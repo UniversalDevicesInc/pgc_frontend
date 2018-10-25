@@ -1,6 +1,10 @@
 {
     "extends": "../tslint.json",
     "rules": {
+        "semicolon": [
+            true,
+            "never"
+        ],
         "directive-selector": [
             true,
             "attribute",

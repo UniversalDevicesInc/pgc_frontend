@@ -67,7 +67,7 @@ export class Authinterceptor implements HttpInterceptor {
   addAuth(req) {
     return req.clone({
         setHeaders: {
-            Authorization: `Bearer ${this.authService.getToken()}`
+            Authorization: `Bearer ${this.authService.getId()}`
         }
     });
   }
@@ -75,16 +75,20 @@ export class Authinterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<any> {
     const authService = this.injector.get(AuthService)
     const started = +Date.now()
-    let expires = authService.getExpires()
-    let access_token = authService.getToken()
-    if (access_token) {
+    const id = authService.getId()
+    // const expires = authService.getExpires()
+    // const access_token = authService.getToken()
+    if (id) {
       if (!this.NOAUTHLIST.includes(req.url)) {
+        /*
         if (started >= expires - 1000 * 600) {
           this.loggerService.add('Auth token expired or expiring soon. Refreshing.')
           return this.doRefresh(started, req, next)
         } else {
           req = this.addAuth(req)
         }
+        */
+        req = this.addAuth(req)
       }
     }
     return next.handle(req)
@@ -104,6 +108,9 @@ export class Authinterceptor implements HttpInterceptor {
                 this.loggerService.add('Got 401, attempting to refresh tokens')
               }
               return this.doRefresh(started, req, next)
+            } else {
+              // Any other error HTTP Error response
+              this.authService.logout()
             }
           }
           return EMPTY

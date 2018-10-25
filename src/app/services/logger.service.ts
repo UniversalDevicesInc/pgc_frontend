@@ -6,17 +6,17 @@ import { environment } from '../../environments/environment'
   providedIn: 'root'
 })
 export class LoggerService {
-  logs: string[] = [];
+  logs: string[] = []
   constructor() { }
 
   add(message: string) {
-    if (!environment.production) {
+    // if (!environment.production) {
       console.log(message)
-      this.logs.push(message);
-    }
+      this.logs.push(message)
+    // }
   }
 
   clear() {
-    this.logs = [];
+    this.logs = []
   }
 }
