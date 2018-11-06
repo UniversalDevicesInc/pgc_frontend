@@ -180,6 +180,11 @@ export class MqttService {
     this.sendMessage(`${environment.STAGE}/ns/${worker}`, payload)
   }
 
+  oauthRequest(worker, params) {
+    const payload = {oauth: params}
+    this.sendMessage(`${environment.STAGE}/ns/${worker}`, payload)
+  }
+
   request(type, data, core = {}) {
     const payload = Object.assign(core, { [type]: data })
     this.sendMessage(`${environment.STAGE}/frontend`, payload)

@@ -23,7 +23,8 @@ import { StoreComponent } from './components/store/store.component'
 import { DetailsComponent } from './components/details/details.component'
 import { ModalConfirmComponent } from './components/modal-confirm/modal-confirm.component'
 import { ModalAddnodeserverComponent } from './components/modal-addnodeserver/modal-addnodeserver.component'
-import { ModalLogComponent } from './components/modal-log/modal-log.component'
+import { ModalLogComponent } from './components/modal-log/modal-log.component';
+import { NsoauthComponent } from './components/nsoauth/nsoauth.component'
 
 
 @NgModule({
@@ -41,6 +42,7 @@ import { ModalLogComponent } from './components/modal-log/modal-log.component'
     ModalAddnodeserverComponent,
     DetailsComponent,
     ModalLogComponent,
+    NsoauthComponent,
   ],
   imports: [
     HttpClientModule,

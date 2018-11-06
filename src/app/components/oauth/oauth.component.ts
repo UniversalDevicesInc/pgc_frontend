@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
 import { BehaviorSubject, of, Observable } from 'rxjs'
 
 import { ToastrService } from 'ngx-toastr'
 import { NgxSpinnerService } from 'ngx-spinner'
 
 import { AuthService } from '../../services/auth.service'
-import { LoggerService } from '../../services/logger.service';
+import { LoggerService } from '../../services/logger.service'
 
 @Component({
   selector: 'app-oauth',
