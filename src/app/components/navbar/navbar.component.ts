@@ -39,7 +39,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
         const currentIsy = localStorage.getItem('currentIsy')
         if (!currentIsy) {
           const profile = JSON.parse(localStorage.getItem('profile'))
-          if (props.includes(profile.preferredIsy)) {
+          if (profile.preferredIsy === 'none') {
+            console.log(`No preferred ISY Found. Using first in list.`)
+            if (props.length > 0) {
+              localStorage.setItem('currentIsy', props[0])
+              if (isys.hasOwnProperty(props[0])) {
+                this.settingsService.currentIsy.next(isys[props[0]])
+              }
+            }
+          } else if (props.includes(profile.preferredIsy)) {
             localStorage.setItem('currentIsy', profile.preferredIsy)
             if (isys.hasOwnProperty(profile.preferredIsy)) {
               this.settingsService.currentIsy.next(isys[profile.preferredIsy])
