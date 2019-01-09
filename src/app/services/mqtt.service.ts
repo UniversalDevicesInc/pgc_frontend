@@ -59,7 +59,7 @@ export class MqttService {
     this.log(`Getting NodeServers from Store`)
     const headers = new HttpHeaders( { } )
     .set('Content-Type', 'application/json')
-    return this.http.get(`${environment.STORE_URI}/api/store/list?cloud`, { headers: headers })
+    return this.http.get(`${environment.STORE_URI}/api/store/list?cloud&sort`, { headers: headers })
       .pipe(catchError(this.handleError('getStore', [])))
   }
 
@@ -172,6 +172,7 @@ export class MqttService {
     }
     const msg = JSON.stringify(Object.assign({userId: this.getId(), clientId: this.clientId},
       message, needResponse ? { seq: this._seq } : undefined))
+    this.log(msg)
     this.client.publish(topic, msg, { qos: 0, retained: retained})
   }
 
