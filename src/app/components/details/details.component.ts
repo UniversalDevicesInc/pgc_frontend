@@ -231,7 +231,11 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   sendControl(command) {
     if (['startNodeServer', 'stopNodeServer', 'restartNodeServer'].includes(command)) {
-      this.mqttService.request(command, { profileNum: this.profileNum, isy: this.settingsService.currentIsy.value })
+      this.mqttService.request(command, {
+        profileNum: this.profileNum,
+        isy: this.settingsService.currentIsy.value,
+        ns: this.nodeServer
+      })
     }
   }
 }

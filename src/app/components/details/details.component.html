@@ -2,29 +2,29 @@
   <div *ngIf="nodeServer.type === 'cloud'" class="text-white col-md-20 col-md-20 center-block" align="center">
     <div class="row card-group">
         <div class="card p-1 pt-2">
-            <h4 class="align-top" align="center" class="card-title">{{nodeServer.name}}({{nodeServer.profileNum}})</h4>
-            <p align="center" class="card-text">Current Status:
-              <span *ngIf="nodeServer.connected" class='badge badge-success'>Connected</span>
-              <span *ngIf="!nodeServer.connected" class='badge badge-danger'>Disconnected</span><br>
-              Current Version: <strong>{{nodeServer.version}}</strong><br />
-              Time Started: <strong>{{nodeServer.timeStarted !== 0 ? (nodeServer.timeStarted | date: 'medium') : 'Not Running'}}</strong><br />
-              Uptime: <strong>{{nodeServer.timeStarted !== 0 ? uptime : 'None'}}</strong><br />
-              <span *ngIf="nodeServer.worker !== 'none'">
-                Current Worker: <strong>{{nodeServer.worker}}</strong>
-              </span>
-            </p>
-            <div class="btn-group btn-group-justified" style="margin-bottom:5px;">
-                <button class="btn btn-primary" (click)="sendControl('startNodeServer')" style="width: 33%" role="button">Start</button>
-                <button class="btn btn-primary" (click)="sendControl('stopNodeServer')" style="width: 34%" role="button">Stop</button>
-                <button class="btn btn-primary" (click)=showDelete(nodeServer) style="width: 33%" role="button">Delete</button>
-              </div>
-              <div class="btn-group btn-group-justified">
-                <button class="btn btn-primary" (click)="showControl('nodes')" style="width: 33%" role="button">Nodes <span class="badge badge-secondary">{{numNodes ? numNodes : 0}}</span></button>
-                <button class="btn btn-primary" (click)="showControl('custom')" style="width: 34%" role="button">Configuration</button>
-                <button class="btn btn-primary" (click)="showLog()" style="width: 33%" role="button">Real-Time Log</button>
-                <!-- <button class="btn btn-default" (click)="showControl('log')" style="width: 20%" role="button">Log</button> -->
-                
-              </div>
+          <h4 class="align-top" align="center" class="card-title">{{nodeServer.name}}({{nodeServer.profileNum}})</h4>
+          <p align="center" class="card-text">Current Status:
+            <span *ngIf="nodeServer.connected" class='badge badge-success'>Connected</span>
+            <span *ngIf="!nodeServer.connected" class='badge badge-danger'>Disconnected</span><br>
+            Current Version: <strong>{{nodeServer.version}}</strong><br />
+            Time Started: <strong>{{nodeServer.timeStarted !== 0 ? (nodeServer.timeStarted | date: 'medium') : 'Not Running'}}</strong><br />
+            Uptime: <strong>{{nodeServer.timeStarted !== 0 ? uptime : 'None'}}</strong><br />
+            <span *ngIf="nodeServer.worker !== 'none'">
+              Current Worker: <strong>{{nodeServer.worker}}</strong>
+            </span>
+          </p>
+          <div class="btn-group btn-group-justified" style="margin-bottom:5px;">
+            <!-- eventually [disabled]="!nodeServer.connected" -->
+            <button class="btn btn-primary" (click)="sendControl('startNodeServer')" style="width: 33%" role="button">Start</button>
+            <button class="btn btn-primary" (click)="sendControl('stopNodeServer')" style="width: 34%" role="button">Stop</button>
+            <button class="btn btn-primary" (click)=showDelete(nodeServer) style="width: 33%" role="button">Delete</button>
+          </div>
+          <div class="btn-group btn-group-justified">
+            <button class="btn btn-primary" (click)="showControl('nodes')" style="width: 33%" role="button">Nodes <span class="badge badge-secondary">{{numNodes ? numNodes : 0}}</span></button>
+            <button class="btn btn-primary" (click)="showControl('custom')" style="width: 34%" role="button">Configuration</button>
+            <button class="btn btn-primary" (click)="showLog()" style="width: 33%" role="button">Real-Time Log</button>
+            <!-- <button class="btn btn-default" (click)="showControl('log')" style="width: 20%" role="button">Log</button> -->
+            </div>
         </div>
     </div>
   </div>
