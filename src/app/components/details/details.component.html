@@ -11,6 +11,9 @@
             Uptime: <strong>{{nodeServer.timeStarted !== 0 ? uptime : 'None'}}</strong><br />
             <span *ngIf="nodeServer.worker !== 'none'">
               Current Worker: <strong>{{nodeServer.worker}}</strong>
+            </span><br>
+            <span *ngIf="devMode">
+              Docker PGURL: <strong>{{nodeServer.pgUrl}}</strong>
             </span>
           </p>
           <div class="btn-group btn-group-justified" style="margin-bottom:5px;">

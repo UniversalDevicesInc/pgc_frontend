@@ -42,7 +42,6 @@ export class AuthService {
           if (data.hasOwnProperty('auth_uri')) {
             // window.location.href = `https://dev.isy.io${data['auth_uri']}?response_type=${data['type']}&` +
             // `client_id=isyportal-oa2-bdnQJABx4HqeI6W&redirect_uri=${data['redirect_uri']}&state=${data['state']}`
-            console.log(environment.STAGE)
             if (environment.ENV === 'dev') {
               window.location.href = `${data['base_uri']}${data['auth_uri']}?response_type=${data['type']}&` +
               `client_id=${data['client_id']}&redirect_uri=${environment.PG_REDIRECT}&state=${data['state']}`

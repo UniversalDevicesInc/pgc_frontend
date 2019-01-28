@@ -11,6 +11,8 @@ import { MqttService } from '../../services/mqtt.service'
 import { SettingsService } from '../../services/settings.service'
 import { ModalAddnodeserverComponent } from '../modal-addnodeserver/modal-addnodeserver.component'
 
+import { environment } from '../../../environments/environment'
+
 @Component({
   selector: 'app-store',
   templateUrl: './store.component.html',
@@ -53,6 +55,7 @@ export class StoreComponent implements OnInit, OnDestroy {
 
   openModal(ns) {
     const modalRef = this.modal.open(ModalAddnodeserverComponent, { centered: true })
+    modalRef.componentInstance.environment = environment
     modalRef.componentInstance.title = `Install NodeServer`
     modalRef.componentInstance.body = `
       <h6 class="text-white">NodeServer:</h6>
@@ -97,12 +100,12 @@ export class StoreComponent implements OnInit, OnDestroy {
       <b>NOTE</b>: If you are trying to upgrade a NodeServer that is already installed,
       stop and re-start it from the dashboard. It will automatically load the newest version available.
     `
-    modalRef.result.then((profileNum) => {
+    modalRef.result.then((data) => {
       if (this.settingsService.currentIsy.value['isyData']['firmware'][0] !== '5') {
         return this.toastr.error(`You must have ISY Firmware version 5.x and above to install NodeServers.`)
       }
-      if (profileNum) {
-        this.addNodeServer(profileNum, ns)
+      if (data.profileNum) {
+        this.addNodeServer(data.profileNum, data.devMode, ns)
         setTimeout(() => {
           this.router.navigate(['/dashboard'])
         }, 1000)
@@ -110,8 +113,8 @@ export class StoreComponent implements OnInit, OnDestroy {
     }).catch((error) => {})
   }
 
-  addNodeServer(profileNum, ns) {
-    this.mqttService.request('addNodeServer', { profileNum: profileNum, ns: ns, isy: this.settingsService.currentIsy.value })
+  addNodeServer(profileNum, devMode, ns) {
+    this.mqttService.request('addNodeServer', { profileNum: profileNum, development: devMode, ns: ns, isy: this.settingsService.currentIsy.value })
   }
 
 

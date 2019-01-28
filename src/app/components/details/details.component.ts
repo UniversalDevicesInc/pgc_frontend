@@ -11,6 +11,8 @@ import { SettingsService } from '../../services/settings.service'
 import { ModalConfirmComponent } from '../modal-confirm/modal-confirm.component'
 import { ModalLogComponent } from '../modal-log/modal-log.component'
 
+import { environment } from '../../../environments/environment'
+
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
@@ -31,6 +33,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
   public newKey
   public newValue
   public dirtyCustom = []
+  public STAGE = environment.STAGE
+  public devMode = false
 
   constructor(
     private settingsService: SettingsService,
@@ -56,6 +60,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
           this.nodeServer = currentNodeServers[this.profileNum]
           try {
             this.numNodes = Object.keys(this.nodeServer.nodes).length
+            this.devMode = this.nodeServer.development || false
           } catch (err) {
             this.numNodes = 0
           }
@@ -73,7 +78,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.uptimeInterval) { clearInterval(this.uptimeInterval) }
-    this.mqttService.logRequest(this.nodeServer.worker, 'removeTail')
+    this.mqttService.logRequest(this.nodeServer.worker, 'stopLogStream')
     // this.mqttService.nsLogs.unsubscribe()
   }
 
@@ -81,23 +86,18 @@ export class DetailsComponent implements OnInit, OnDestroy {
     if (this.currentlyEnabled === type) { return this.currentlyEnabled = null }
     this.currentlyEnabled = type
     this.dirtyCustom = []
-    if (type === 'log') {
-
-    } else {
-      this.mqttService.logRequest(this.nodeServer.worker, 'removeTail')
-    }
   }
 
   showLog() {
-    this.mqttService.logRequest(this.nodeServer.worker, 'streamLog')
+    this.mqttService.logRequest(this.nodeServer.worker, 'startLogStream')
     const modalRef = this.modal.open(ModalLogComponent, { size: 'lg', centered: true, windowClass: 'huge' })
     modalRef.componentInstance.title = `${this.nodeServer.name} Log`
     modalRef.componentInstance.body = ``
     modalRef.componentInstance.log = `nsLogs`
     modalRef.result.then((result) => {
-      this.mqttService.logRequest(this.nodeServer.worker, 'removeTail')
+      this.mqttService.logRequest(this.nodeServer.worker, 'stopLogStream')
     }).catch((error) => {
-      this.mqttService.logRequest(this.nodeServer.worker, 'removeTail')
+      this.mqttService.logRequest(this.nodeServer.worker, 'stopLogStream')
     })
 
   }

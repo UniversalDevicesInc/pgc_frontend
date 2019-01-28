@@ -14,9 +14,13 @@
             {{num}}
         </option>
     </select>
+    <label *ngIf="environment.STAGE !== 'prod'" class="container">
+      <input type="checkbox" [(ngModel)]="checkBox" (change)="checked($event.target.checked)" data-md-icheck />
+      Development Mode
+      <span class="checkmark"></span>
+    </label><br>
   </div>
   <div class="modal-footer">
     <button class="btn btn-primary" (click)="confirm()">Confirm</button>
     <button class="btn btn-primary" (click)="cancel()">Cancel</button>
   </div>
-  

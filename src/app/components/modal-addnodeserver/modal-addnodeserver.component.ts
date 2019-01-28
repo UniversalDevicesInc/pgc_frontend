@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core'
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap'
 
-
 import { SettingsService } from '../../services/settings.service'
 
 @Component({
@@ -12,8 +11,11 @@ import { SettingsService } from '../../services/settings.service'
 export class ModalAddnodeserverComponent implements OnInit {
   @Input() title
   @Input() body
+  @Input() environment
 
   index: Number
+  marked = false
+  checkBox = false
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -29,11 +31,15 @@ export class ModalAddnodeserverComponent implements OnInit {
   }
 
   confirm() {
-    this.activeModal.close(this.index)
+    this.activeModal.close({profileNum: this.index, devMode: this.marked})
   }
 
   onSelect(value) {
     this.index = value
+  }
+
+  checked(value) {
+    this.marked = value
   }
 
 }

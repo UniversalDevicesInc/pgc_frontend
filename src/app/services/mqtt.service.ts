@@ -3,12 +3,14 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 import { catchError, map, tap } from 'rxjs/operators'
 import { BehaviorSubject, Observable, throwError } from 'rxjs'
 import * as mqtt from 'mqtt/dist/mqtt'
+import * as pako from 'pako/dist/pako'
 import { ToastrService } from 'ngx-toastr'
 
 import { environment } from '../../environments/environment'
 
 import { LoggerService } from './logger.service'
 import { SettingsService } from './settings.service'
+import { s } from '@angular/core/src/render3';
 
 @Injectable({
   providedIn: 'root'
@@ -88,29 +90,43 @@ export class MqttService {
       this.topic = `${environment.STAGE}/frontend/${this.getId()}/${this.clientId}`
       this.client.subscribe(this.topic, null)
       this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}`, null)
-      this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs`, null)
       this.addSubscribers()
       this.request('getIsys', '')
     })
 
     this.client.on('message', (topic, message, packet) => {
       if (message === null) { return }
-      const msg = JSON.parse(message.toString())
-      if (topic === `${environment.STAGE}/frontend/${this.getId()}/logs`) {
-        this.nsLogs.next(msg)
-      } else {
-        for (const key in msg) {
-          if (['result', 'userId', 'topic', 'id'].includes(key)) { continue }
-          if (this[key]) {
-            if (msg.hasOwnProperty('id')) {
-              msg[key].id = msg.id
+      if (topic.includes('/file')) {
+        try {
+          const output = pako.inflate(message, {to: 'string'})
+          // console.log(output)
+          let lines = output.split('\n')
+          for (let line of lines) {
+            if (line) {
+              this.nsLogs.next(JSON.parse(line))
             }
-            this[key].next(msg[key])
           }
+        } catch (err) {
+          console.error(err.stack)
         }
-        // if (msg.node && msg.node.substring(0, 3) === 'pgc') { return }
-        // if (topic === 'test') {
-        this.log(message)
+      } else {
+        const msg = JSON.parse(message.toString())
+        if (topic.startsWith(`${environment.STAGE}/frontend/${this.getId()}/logs`)) {
+          this.nsLogs.next(msg)
+        } else {
+          for (const key in msg) {
+            if (['result', 'userId', 'topic', 'id'].includes(key)) { continue }
+            if (this[key]) {
+              if (msg.hasOwnProperty('id')) {
+                msg[key].id = msg.id
+              }
+              this[key].next(msg[key])
+            }
+          }
+          // if (msg.node && msg.node.substring(0, 3) === 'pgc') { return }
+          // if (topic === 'test') {
+          this.log(message)
+        }
       }
     })
   }
@@ -177,6 +193,13 @@ export class MqttService {
   }
 
   logRequest(worker, type) {
+    if (type === 'startLogStream') {
+      this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
+      this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
+    } else {
+      this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
+      this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
+    }
     const payload = {[type]: {}}
     this.sendMessage(`${environment.STAGE}/ns/${worker}`, payload)
   }

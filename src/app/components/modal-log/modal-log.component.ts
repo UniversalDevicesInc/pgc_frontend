@@ -30,14 +30,15 @@ export class ModalLogComponent implements OnInit, OnDestroy {
     this.mqttService[this.log].subscribe((log) => {
       if (log === null) { return }
       try {
-        log = JSON.parse(log)
-        // console.log(log['timestamp'])
         const formatData = `${this.pipe.transform(new Date(log['timestamp']), 'M/d/yy HH:mm:ss:SSS')} ` +
                             `[${(log['threadName'] + '      ').slice(0, 10)}]` +
                             `[${(log['levelname'] + '     ').slice(0, 5)}] :: ${log['message']}`
         this.nsLog.push(formatData)
         if (this.autoScroll) { setTimeout(() => { this.scrollToBottom() }, 100) }
-      } catch (err) { return }
+      } catch (err) {
+        console.log(err)
+        return
+      }
     })
   }
 
