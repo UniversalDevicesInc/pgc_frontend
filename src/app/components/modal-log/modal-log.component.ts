@@ -17,7 +17,7 @@ export class ModalLogComponent implements OnInit, OnDestroy {
   @Input() log
 
   public autoScroll = true
-  public nsLog: string[] = ['Waiting on log File']
+  public nsLog: string[] = []
   public logWait: string[] = []
   private processingWait = false
   public pipe = new DatePipe('en-US')
