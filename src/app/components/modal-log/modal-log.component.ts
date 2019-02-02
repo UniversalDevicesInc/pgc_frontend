@@ -17,7 +17,9 @@ export class ModalLogComponent implements OnInit, OnDestroy {
   @Input() log
 
   public autoScroll = true
-  public nsLog: string[] = []
+  public nsLog: string[] = ['Waiting on log File']
+  public logWait: string[] = []
+  private processingWait = false
   public pipe = new DatePipe('en-US')
 
   constructor(
@@ -29,11 +31,25 @@ export class ModalLogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.mqttService[this.log].subscribe((log) => {
       if (log === null) { return }
+      if (this.mqttService.gotLogFile && this.logWait.length > 0) {
+        if (!this.processingWait) {
+          this.processingWait = true
+          while (this.logWait.length) {
+            this.nsLog.push(this.logWait.shift())
+          }
+          this.logWait = []
+          this.processingWait = false
+        }
+      }
       try {
         const formatData = `${this.pipe.transform(new Date(log['timestamp']), 'M/d/yy HH:mm:ss:SSS')} ` +
                             `[${(log['threadName'] + '      ').slice(0, 10)}]` +
                             `[${(log['levelname'] + '     ').slice(0, 5)}] :: ${log['message']}`
-        this.nsLog.push(formatData)
+        if (this.mqttService.gotLogFile || log.file ) {
+          this.nsLog.push(formatData)
+        } else {
+          this.logWait.push(formatData)
+        }
         if (this.autoScroll) { setTimeout(() => { this.scrollToBottom() }, 100) }
       } catch (err) {
         console.log(err)

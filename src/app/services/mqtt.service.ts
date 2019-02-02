@@ -23,6 +23,7 @@ export class MqttService {
   public notification: BehaviorSubject<object> = new BehaviorSubject(null)
   public nsLogs: BehaviorSubject<string> = new BehaviorSubject(null)
   public connected = false
+  public gotLogFile = false
   private client: any
   private clientId: string
   private topic: string
@@ -101,11 +102,12 @@ export class MqttService {
           const output = pako.inflate(message, {to: 'string'})
           // console.log(output)
           let lines = output.split('\n')
-          for (let line of lines) {
+          lines.forEach((line) => {
             if (line) {
-              this.nsLogs.next(JSON.parse(line))
+              this.nsLogs.next(Object.assign(JSON.parse(line), { file: true }))
             }
-          }
+          })
+          this.gotLogFile = true
         } catch (err) {
           console.error(err.stack)
         }
@@ -193,6 +195,7 @@ export class MqttService {
   }
 
   logRequest(worker, type) {
+    this.gotLogFile = false
     if (type === 'startLogStream') {
       this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
       this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
