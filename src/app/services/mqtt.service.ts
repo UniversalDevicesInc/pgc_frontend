@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment'
 
 import { LoggerService } from './logger.service'
 import { SettingsService } from './settings.service'
-import { s } from '@angular/core/src/render3';
+// import { s } from '@angular/core/src/render3';
 
 @Injectable({
   providedIn: 'root'
