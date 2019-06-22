@@ -24,6 +24,7 @@ export class MqttService {
   public nsLogs: BehaviorSubject<string> = new BehaviorSubject(null)
   public connected = false
   public gotLogFile = false
+  public logStarted = false
   private client: any
   private clientId: string
   private topic: string
@@ -62,7 +63,7 @@ export class MqttService {
     this.log(`Getting NodeServers from Store`)
     const headers = new HttpHeaders( { } )
     .set('Content-Type', 'application/json')
-    return this.http.get(`${environment.STORE_URI}/api/store/list?cloud&sort`, { headers: headers })
+    return this.http.get(`${environment.PG_URI}/api/store/list?cloud&sort`, { headers: headers })
       .pipe(catchError(this.handleError('getStore', [])))
   }
 
@@ -196,15 +197,22 @@ export class MqttService {
 
   logRequest(worker, type) {
     this.gotLogFile = false
+    const payload = {[type]: {ns: `${worker}`}}
     if (type === 'startLogStream') {
-      this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
-      this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
-    } else {
-      this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
-      this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
+      if (!this.logStarted) {
+        this.logStarted = true
+        this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
+        this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
+        this.sendMessage(`${environment.STAGE}/ns/${worker}`, payload)
+      }
+    } else if (type === 'stopLogStream'){
+      if (this.logStarted) {
+        this.logStarted = false
+        this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
+        this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
+        this.sendMessage(`${environment.STAGE}/ns/${worker}`, payload)
+      }
     }
-    const payload = {[type]: {}}
-    this.sendMessage(`${environment.STAGE}/ns/${worker}`, payload)
   }
 
   oauthRequest(worker, params) {

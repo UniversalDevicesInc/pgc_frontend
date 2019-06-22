@@ -11,7 +11,7 @@ import { SettingsService } from '../../services/settings.service'
   styleUrls: ['./modal-log.component.css']
 })
 export class ModalLogComponent implements OnInit, OnDestroy {
-  @ViewChild('nslogScroll') private logScrollContainer: ElementRef
+  @ViewChild('nslogScroll', { static: true }) private logScrollContainer: ElementRef
   @Input() title
   @Input() body
   @Input() log
