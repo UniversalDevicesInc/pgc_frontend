@@ -48,7 +48,7 @@ import { NsoauthComponent } from './components/nsoauth/nsoauth.component'
     HttpClientModule,
     BrowserModule,
     FormsModule,
-    NgbModule.forRoot(),
+    NgbModule,
     AppRoutingModule,
     BrowserAnimationsModule, // required animations module
     ToastrModule.forRoot({

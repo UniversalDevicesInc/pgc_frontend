@@ -17,6 +17,16 @@
 /***************************************************************************************************
  * BROWSER POLYFILLS
  */
+import 'setimmediate'
+
+(window as any).global = window;
+(window as any).process = {
+  env: { DEBUG: undefined },
+  version: [],
+  nextTick: setImmediate,
+  title: 'browser',
+};
+global.Buffer = global.Buffer || require('buffer').Buffer;
 
 /** IE9, IE10 and IE11 requires all of the following polyfills. **/
 // import 'core-js/es6/symbol';
@@ -43,7 +53,7 @@
 
 /** Evergreen browsers require these. **/
 // Used for reflect-metadata in JIT. If you use AOT (and only Angular decorators), you can remove.
-import 'core-js/es7/reflect';
+//import 'core-js/es7/reflect';
 
 
 /**
