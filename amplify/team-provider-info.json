@@ -1,0 +1,14 @@
+{
+    "test": {
+        "awscloudformation": {
+            "AuthRoleName": "pgc-test-20190819184209-authRole",
+            "UnauthRoleArn": "arn:aws:iam::350784980517:role/pgc-test-20190819184209-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::350784980517:role/pgc-test-20190819184209-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "pgc-test-20190819184209-deployment",
+            "UnauthRoleName": "pgc-test-20190819184209-unauthRole",
+            "StackName": "pgc-test-20190819184209",
+            "StackId": "arn:aws:cloudformation:us-east-1:350784980517:stack/pgc-test-20190819184209/f65d9ce0-c2da-11e9-b02c-0e85eb8bafe8"
+        }
+    }
+}

@@ -12,6 +12,7 @@ export class SettingsService {
   public currentNodeServers: BehaviorSubject<object> = new BehaviorSubject(null)
   public isys
   public nodeServers
+  public id
   public availableNodeServerSlots = []
 
   constructor(

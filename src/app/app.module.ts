@@ -7,13 +7,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ToastrModule } from 'ngx-toastr'
 import { NgxSpinnerModule } from 'ngx-spinner'
 
-import { Authinterceptor } from './interceptors/authinterceptor'
+// import { Authinterceptor } from './interceptors/authinterceptor'
 
 import { SafePipe } from './pipes/safe.pipe'
 
+import { AmplifyAngularModule, AmplifyService, AmplifyModules } from 'aws-amplify-angular'
+import Auth from '@aws-amplify/auth'
+import Interactions from '@aws-amplify/interactions'
+import Storage from '@aws-amplify/storage'
+
 import { AppComponent } from './app.component'
 import { DashboardComponent } from './components/dashboard/dashboard.component'
-import { OauthComponent } from './components/oauth/oauth.component'
+// import { OauthComponent } from './components/oauth/oauth.component'
 import { AppRoutingModule } from './/app-routing.module'
 import { LoginComponent } from './components/login/login.component'
 import { NavbarComponent } from './components/navbar/navbar.component'
@@ -23,15 +28,16 @@ import { StoreComponent } from './components/store/store.component'
 import { DetailsComponent } from './components/details/details.component'
 import { ModalConfirmComponent } from './components/modal-confirm/modal-confirm.component'
 import { ModalAddnodeserverComponent } from './components/modal-addnodeserver/modal-addnodeserver.component'
-import { ModalLogComponent } from './components/modal-log/modal-log.component';
+import { ModalLogComponent } from './components/modal-log/modal-log.component'
 import { NsoauthComponent } from './components/nsoauth/nsoauth.component'
+// import { OauthCognitoComponent } from './components/oauth-cognito/oauth-cognito.component'
 
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
-    OauthComponent,
+    // OauthComponent,
     LoginComponent,
     NavbarComponent,
     FooterComponent,
@@ -43,6 +49,7 @@ import { NsoauthComponent } from './components/nsoauth/nsoauth.component'
     DetailsComponent,
     ModalLogComponent,
     NsoauthComponent,
+    // OauthCognitoComponent,
   ],
   imports: [
     HttpClientModule,
@@ -58,12 +65,24 @@ import { NsoauthComponent } from './components/nsoauth/nsoauth.component'
       closeButton: true,
       timeOut: 5000
     }), // ToastrModule added
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    AmplifyAngularModule
   ],
-  providers: [{
+  providers: [
+   /* {
     provide: HTTP_INTERCEPTORS,
     useClass: Authinterceptor,
     multi: true
+  }, */
+  {
+    provide: AmplifyService,
+    useFactory:  () => {
+      return AmplifyModules({
+        Auth,
+        Storage,
+        Interactions
+      })
+    }
   }],
   bootstrap: [AppComponent],
   entryComponents: [

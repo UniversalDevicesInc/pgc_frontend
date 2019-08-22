@@ -13,10 +13,10 @@
         </li>
       </ul>
       <ul class="nav ml-auto">
-        <li *ngIf="authService.loggedIn()" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
+        <li *ngIf="(authService.loggedIn | async)" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
           <a class="nav-link" [routerLink]="['/dashboard']" (click)="isCollapsed = !isCollapsed">{{dashboard}}</a>
         </li>
-        <li *ngIf="authService.loggedIn() && isys !== null" class="nav-item">
+        <li *ngIf="(authService.loggedIn | async) && isys !== null" class="nav-item">
           <div ngbDropdown>
             <span class="nav-link text-light" id="nsMenu" ngbDropdownToggle>ISYs</span>
             <div ngbDropdownMenu aria-labelledby="nsMenu">
@@ -25,16 +25,16 @@
             </div>
           </div>
         </li>
-        <li *ngIf="authService.loggedIn()" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
+        <li *ngIf="(authService.loggedIn | async)" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
           <a class="nav-link" [routerLink]="['/store']" (click)="isCollapsed = !isCollapsed">Store</a>
         </li>
-        <li *ngIf="authService.loggedIn() && !environment.production" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
+        <li *ngIf="(authService.loggedIn | async) && !environment.production" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
           <a class="nav-link" [routerLink]="['/log']" (click)="isCollapsed = !isCollapsed">Log</a>
         </li>
-        <li *ngIf="!authService.loggedIn()" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
+        <li *ngIf="!(authService.loggedIn | async)" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
           <a class="nav-link" (click)="authService.login()" href="#">Login</a>
         </li>
-        <li *ngIf="authService.loggedIn()" class="nav-item">
+        <li *ngIf="(authService.loggedIn | async)" class="nav-item">
           <a class="nav-link" (click)="authService.logout()" href="#">Logout {{username}}</a>
         </li>
       </ul>

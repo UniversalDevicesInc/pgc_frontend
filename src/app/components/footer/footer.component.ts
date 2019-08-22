@@ -24,13 +24,18 @@ export class FooterComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.authService.username.subscribe(username => this.username = username)
+    this.authService.loggedIn.subscribe(loggedIn => {
+      if (loggedIn && !this.mqttService.connected) {
+        this.mqttService.start()
+      }
+    })
     this.settingsService.currentIsy.subscribe(currentIsy => {
       if (currentIsy !== null) {
         this.currentIsy = currentIsy
       }
     })
     this.authService.getUsername()
-    if (this.authService.loggedIn()) { this.mqttService.start() }
+    //if (this.authService.loggedIn.value) { this.mqttService.start() }
   }
 
   ngOnDestroy() {

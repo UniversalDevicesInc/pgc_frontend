@@ -11,6 +11,7 @@ import { environment } from '../../environments/environment'
 import { LoggerService } from './logger.service'
 import { SettingsService } from './settings.service'
 //import { s } from '@angular/core/src/render3';
+import { Auth } from 'aws-amplify'
 
 @Injectable({
   providedIn: 'root'
@@ -43,14 +44,16 @@ export class MqttService {
   }
 
   getId() {
-    const profile = JSON.parse(localStorage.getItem('profile')) || {}
-    if (profile.hasOwnProperty('id')) { return profile.id }
+    //const profile = JSON.parse(localStorage.getItem('profile')) || {}
+    //if (profile.hasOwnProperty('id')) { return profile.id }
+    return this.settingsService.id
   }
 
   getUrl() {
     this.log(`Getting MQTT URL from backend`)
     const headers = new HttpHeaders( { } )
     .set('Content-Type', 'application/json')
+    .set('Authorization', `Bearer ${this.getId()}`)
     const params = {
       id: this.getId(),
     }

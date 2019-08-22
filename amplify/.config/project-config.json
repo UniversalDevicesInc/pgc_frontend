@@ -1,0 +1,17 @@
+{
+    "projectName": "pgc",
+    "version": "2.0",
+    "frontend": "javascript",
+    "javascript": {
+        "framework": "angular",
+        "config": {
+            "SourceDir": "src",
+            "DistributionDir": "dist/frontend/test",
+            "BuildCommand": "npm run build:test",
+            "StartCommand": "npm run start:local"
+        }
+    },
+    "providers": [
+        "awscloudformation"
+    ]
+}
