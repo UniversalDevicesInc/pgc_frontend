@@ -7,8 +7,8 @@ export const environment = {
   PG_URI: 'https://pxu4jgaiue.execute-api.us-east-1.amazonaws.com/test',
   STORE_URI: 'https://hsl7p7mdal.execute-api.us-east-1.amazonaws.com/prod',
   STAGE: 'test',
-  PG_REDIRECT: 'https://localhost:8080',
-  AUTH_URI: 'https://pgc-test.auth.us-east-1.amazoncognito.com/login?response_type=code&client_id=3lm35h1q1kv8rqcif6p22fclut&redirect_uri=https://localhost:8080&state=abc123',
+  //PG_REDIRECT: 'https://localhost:8080',
+  //AUTH_URI: 'https://pgc-test-auth.isy.io/login?response_type=code&client_id=ab6rn30rre6bjdtggnkbjjh73&redirect_uri=https://localhost:8080&state=abc123',
   ENV: 'dev'
 }
 

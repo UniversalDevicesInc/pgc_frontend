@@ -22,7 +22,7 @@ import 'setimmediate'
 (window as any).global = window;
 (window as any).process = {
   env: { DEBUG: undefined },
-  version: [],
+  version: 'v12.7.0',
   nextTick: setImmediate,
   title: 'browser',
 };

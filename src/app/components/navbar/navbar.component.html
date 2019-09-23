@@ -8,7 +8,7 @@
 
     <div id="navbar" class="collapse navbar-collapse" id="navbar" [ngbCollapse]="isCollapsed">
       <ul class="nav mr-auto">
-        <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions] = "{exact:true}">
+        <li *ngIf="(authService.loggedIn | async)" class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions] = "{exact:true}">
           <a class="nav-link" [routerLink]="['/']" (click)="isCollapsed = true">Home</a>
         </li>
       </ul>
@@ -32,10 +32,10 @@
           <a class="nav-link" [routerLink]="['/log']" (click)="isCollapsed = !isCollapsed">Log</a>
         </li>
         <li *ngIf="!(authService.loggedIn | async)" class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}">
-          <a class="nav-link" (click)="authService.login()" href="#">Login</a>
+          <a class="nav-link" (click)="authService.login()" [routerLink]="">Login</a>
         </li>
         <li *ngIf="(authService.loggedIn | async)" class="nav-item">
-          <a class="nav-link" (click)="authService.logout()" href="#">Logout {{username}}</a>
+          <a class="nav-link" [routerLink]="['/login']" (click)="authService.logout()" >Logout {{username}}</a>
         </li>
       </ul>
     </div><!--/.nav-collapse -->

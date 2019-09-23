@@ -1,6 +1,6 @@
 <footer class="footer">
   <br>
-  <div *ngIf="authService.loggedIn" class="container text-center">
+  <div *ngIf="authService.loggedIn | async" class="container text-center">
     <div class="card" style="max-width:800px;margin-left:auto; margin-right:auto;">
         <div class="card-body">
           <span align="center">

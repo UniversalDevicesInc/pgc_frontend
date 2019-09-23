@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 import { catchError, map, tap } from 'rxjs/operators'
 import { BehaviorSubject, Observable, throwError } from 'rxjs'
+import * as AWS from 'aws-sdk'
 import * as mqtt from 'mqtt/dist/mqtt'
 import * as pako from 'pako/dist/pako'
 import { ToastrService } from 'ngx-toastr'
@@ -10,8 +11,8 @@ import { environment } from '../../environments/environment'
 
 import { LoggerService } from './logger.service'
 import { SettingsService } from './settings.service'
-//import { s } from '@angular/core/src/render3';
-import { Auth } from 'aws-amplify'
+import Amplify, { Auth, PubSub } from 'aws-amplify'
+import * as signUrl from 'aws-device-gateway-signed-url'
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,7 @@ export class MqttService {
   public nsLogs: BehaviorSubject<string> = new BehaviorSubject(null)
   public connected = false
   public gotLogFile = false
+  private _iotEndpoint
   private client: any
   private clientId: string
   private topic: string
@@ -36,7 +38,7 @@ export class MqttService {
     private toastr: ToastrService,
     private settingsService: SettingsService,
     private http: HttpClient
-  ) { }
+  ) {}
 
   /** Log a message with the LoggerService */
   private log(message: string) {
@@ -44,8 +46,6 @@ export class MqttService {
   }
 
   getId() {
-    //const profile = JSON.parse(localStorage.getItem('profile')) || {}
-    //if (profile.hasOwnProperty('id')) { return profile.id }
     return this.settingsService.id
   }
 
@@ -71,16 +71,33 @@ export class MqttService {
 
   start() {
     this.log(`Starting MQTT Service :: ${environment.STAGE}`)
-    this.getUrl().subscribe(data => this.connect(data['url']))
+    //this.getUrl().subscribe(data => this.connect(data['url']))
+    this.connect()
   }
 
-  connect(url) {
+  async connect() {
     if (this.connected) { return }
+    AWS.config.region = 'us-east-1'
+    const creds = await Auth.currentCredentials()
+    AWS.config.credentials = creds
+    const iot = new AWS.Iot({ credentials: Auth.essentialCredentials(creds) })
+    await iot.attachPolicy({
+      policyName: 'iot-core',
+      target: (await Auth.currentCredentials()).identityId
+    }).promise()
+    this._iotEndpoint = (await iot.describeEndpoint({ endpointType: 'iot:Data-ATS' }).promise()).endpointAddress
+    const options = {
+      accessKey: Auth.essentialCredentials(creds).accessKeyId,
+      secretKey: Auth.essentialCredentials(creds).secretAccessKey,
+      sessionToken: Auth.essentialCredentials(creds).sessionToken,
+      regionName: AWS.config.region,
+      endpoint: this._iotEndpoint,
+      expires: 60
+    }
+    let url = signUrl(options)
+
     if (!this.clientId) {
       this.clientId = `pgc-${this.randomString(10)}`
-    }
-    const options = {
-      clientId: this.clientId
     }
     if (!this.client) {
       this.client = mqtt.connect(url, options)
@@ -90,7 +107,7 @@ export class MqttService {
 
     this.client.on('connect', () => {
       this.connected = true
-      this.log(`MQTT connected to ${url}`)
+      this.log(`MQTT connected to ${this._iotEndpoint}`)
       this.topic = `${environment.STAGE}/frontend/${this.getId()}/${this.clientId}`
       this.client.subscribe(this.topic, null)
       this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}`, null)

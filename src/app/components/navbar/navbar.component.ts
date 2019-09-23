@@ -38,8 +38,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
         const currentIsy = localStorage.getItem('currentIsy')
         if (!currentIsy) {
-          const profile = JSON.parse(localStorage.getItem('profile'))
-          if (!profile || profile.preferredIsy === 'none') {
+
+          const preferredIsy = this.authService.user['custom:preferredIsy']
+          if (!preferredIsy) {
             console.log(`No preferred ISY Found. Using first in list.`)
             if (props.length > 0) {
               localStorage.setItem('currentIsy', props[0])
@@ -47,10 +48,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 this.settingsService.currentIsy.next(isys[props[0]])
               }
             }
-          } else if (props.includes(profile.preferredIsy)) {
-            localStorage.setItem('currentIsy', profile.preferredIsy)
-            if (isys.hasOwnProperty(profile.preferredIsy)) {
-              this.settingsService.currentIsy.next(isys[profile.preferredIsy])
+          } else if (props.includes(preferredIsy)) {
+            localStorage.setItem('currentIsy', preferredIsy)
+            if (isys.hasOwnProperty(preferredIsy)) {
+              this.settingsService.currentIsy.next(isys[preferredIsy])
             }
           }
         } else {

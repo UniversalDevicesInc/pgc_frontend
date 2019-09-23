@@ -31,7 +31,6 @@ export class NsoauthComponent implements OnInit {
     setTimeout(() => {
       this.activatedRoute.queryParams.subscribe(params => {
         if (params.hasOwnProperty('code') && params.hasOwnProperty('state')) {
-          console.log(params)
           this.mqttService.oauthRequest(params.state, params)
           this.toastr.success('Oauth Code received. Sending to nodeserver.')
         } else {
