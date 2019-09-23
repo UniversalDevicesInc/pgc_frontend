@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core'
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core'
 import { Router, ActivatedRoute } from '@angular/router'
 import { DatePipe } from '@angular/common'
 
@@ -12,7 +12,6 @@ import { ModalConfirmComponent } from '../modal-confirm/modal-confirm.component'
 import { ModalLogComponent } from '../modal-log/modal-log.component'
 
 import { environment } from '../../../environments/environment'
-
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
@@ -52,6 +51,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
     })
   }
 
+  @HostListener("window:beforeunload", ["$event"]) unloadHandler(event: Event) {
+    console.log("Processing beforeunload...")
+    this.mqttService.logRequest(this.nodeServer.worker, 'stopLogStream')
+    // Do more processing...
+    // event.returnValue = false // popup are you sure?
+}
+
   ngOnInit() {
     this.spinner.show()
     this.settingsService.currentNodeServers.subscribe(currentNodeServers => {
@@ -79,7 +85,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.uptimeInterval) { clearInterval(this.uptimeInterval) }
     this.mqttService.logRequest(this.nodeServer.worker, 'stopLogStream')
-    // this.mqttService.nsLogs.unsubscribe()
   }
 
   showControl(type) {
@@ -91,15 +96,15 @@ export class DetailsComponent implements OnInit, OnDestroy {
   showLog() {
     this.mqttService.logRequest(this.nodeServer.worker, 'startLogStream')
     const modalRef = this.modal.open(ModalLogComponent, { size: 'lg', centered: true, windowClass: 'huge' })
-    modalRef.componentInstance.title = `${this.nodeServer.name} Log`
+    modalRef.componentInstance.title = `${this.nodeServer.name} Log (Last 5000 lines)`
     modalRef.componentInstance.body = ``
     modalRef.componentInstance.log = `nsLogs`
+    modalRef.componentInstance.name = this.nodeServer.worker
     modalRef.result.then((result) => {
       this.mqttService.logRequest(this.nodeServer.worker, 'stopLogStream')
     }).catch((error) => {
       this.mqttService.logRequest(this.nodeServer.worker, 'stopLogStream')
     })
-
   }
 
   deleteNode(node) {

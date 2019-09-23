@@ -100,22 +100,19 @@ export class MqttService {
       if (message === null) { return }
       if (topic.includes('/file')) {
         try {
-          const output = pako.inflate(message, {to: 'string'})
-          // console.log(output)
-          let lines = output.split('\n')
-          lines.forEach((line) => {
-            if (line) {
-              this.nsLogs.next(Object.assign(JSON.parse(line), { file: true }))
-            }
-          })
-          this.gotLogFile = true
+          const msg = JSON.parse(message.toString())
+          const output = pako.inflate(msg.log, {to: 'string'})
+          if (msg.end) {
+            this.gotLogFile = true
+          }
+          this.nsLogs.next(output)
         } catch (err) {
-          console.error(err.stack)
+          console.error(err)
         }
       } else {
         const msg = JSON.parse(message.toString())
         if (topic.startsWith(`${environment.STAGE}/frontend/${this.getId()}/logs`)) {
-          this.nsLogs.next(msg)
+          this.nsLogs.next(msg.log)
         } else {
           for (const key in msg) {
             if (['result', 'userId', 'topic', 'id'].includes(key)) { continue }
@@ -197,20 +194,24 @@ export class MqttService {
 
   logRequest(worker, type) {
     this.gotLogFile = false
-    const payload = {[type]: {ns: `${worker}`}}
+    const logTopic = `${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`
+    const payload = {
+      topic: logTopic,
+      [type]: {ns: `${worker}`}
+    }
     if (type === 'startLogStream') {
       if (!this.logStarted) {
         this.logStarted = true
-        this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
-        this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
-        this.sendMessage(`${environment.STAGE}/ns/${worker}`, payload)
+        this.client.subscribe(logTopic, null)
+        this.client.subscribe(`${logTopic}/file`, null)
+        this.sendMessage(`${environment.STAGE}/workers`, payload)
       }
     } else if (type === 'stopLogStream'){
       if (this.logStarted) {
         this.logStarted = false
-        this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
-        this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
-        this.sendMessage(`${environment.STAGE}/ns/${worker}`, payload)
+        this.client.unsubscribe(logTopic, null)
+        this.client.unsubscribe(`${logTopic}/file`, null)
+        this.sendMessage(`${environment.STAGE}/workers`, payload)
       }
     }
   }
