@@ -11,16 +11,18 @@ import { SettingsService } from '../../services/settings.service'
   styleUrls: ['./modal-log.component.css']
 })
 export class ModalLogComponent implements OnInit, OnDestroy {
-  @ViewChild('nslogScroll', {static: false}) private logScrollContainer: ElementRef
+  @ViewChild('nslogScroll', { static: true }) private logScrollContainer: ElementRef
   @Input() title
   @Input() body
   @Input() log
+  @Input() name
 
   public autoScroll = true
   public nsLog: string[] = []
   public logWait: string[] = []
   private processingWait = false
   public pipe = new DatePipe('en-US')
+  public nsLogsSub
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -29,7 +31,7 @@ export class ModalLogComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.mqttService[this.log].subscribe((log) => {
+    this.nsLogsSub = this.mqttService[this.log].subscribe((log) => {
       if (log === null) { return }
       if (this.mqttService.gotLogFile && this.logWait.length > 0) {
         if (!this.processingWait) {
@@ -42,13 +44,14 @@ export class ModalLogComponent implements OnInit, OnDestroy {
         }
       }
       try {
+        /*
         const formatData = `${this.pipe.transform(new Date(log['timestamp']), 'M/d/yy HH:mm:ss:SSS')} ` +
                             `[${(log['threadName'] + '      ').slice(0, 10)}]` +
-                            `[${(log['levelname'] + '     ').slice(0, 5)}] :: ${log['message']}`
-        if (this.mqttService.gotLogFile || log.file ) {
-          this.nsLog.push(formatData)
+                            `[${(log['levelname'] + '     ').slice(0, 5)}] :: ${log['message']}` */
+        if (this.mqttService.gotLogFile) {
+          this.nsLog.push(log.endsWith('\n') ? log : `${log}\n`)
         } else {
-          this.logWait.push(formatData)
+          this.logWait.push(log.endsWith('\n') ? log : `${log}\n`)
         }
         if (this.autoScroll) { setTimeout(() => { this.scrollToBottom() }, 100) }
       } catch (err) {
@@ -59,7 +62,19 @@ export class ModalLogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // this.mqttService.nsLogs.unsubscribe()
+    this.nsLogsSub.unsubscribe()
+  }
+
+  download() {
+    //let download = this.mqttService[this.log].subscribe((text) => {
+    const element = document.createElement('a')
+    const fileType = 'text/plain'
+    element.setAttribute('href', `data:${fileType};charset=utf-8,${encodeURIComponent(this.nsLog.join(''))}`)
+    element.setAttribute('download', `${this.name}.txt`)
+    var event = new MouseEvent("click");
+    element.dispatchEvent(event);
+    //})
+    //download.unsubscribe()
   }
 
   cancel() {

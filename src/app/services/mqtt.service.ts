@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment'
 
 import { LoggerService } from './logger.service'
 import { SettingsService } from './settings.service'
-//import { s } from '@angular/core/src/render3';
+// import { s } from '@angular/core/src/render3';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +24,7 @@ export class MqttService {
   public nsLogs: BehaviorSubject<string> = new BehaviorSubject(null)
   public connected = false
   public gotLogFile = false
+  public logStarted = false
   private client: any
   private clientId: string
   private topic: string
@@ -62,7 +63,7 @@ export class MqttService {
     this.log(`Getting NodeServers from Store`)
     const headers = new HttpHeaders( { } )
     .set('Content-Type', 'application/json')
-    return this.http.get(`${environment.STORE_URI}/api/store/list?cloud&sort`, { headers: headers })
+    return this.http.get(`${environment.PG_URI}/api/store/list?cloud&sort`, { headers: headers })
       .pipe(catchError(this.handleError('getStore', [])))
   }
 
@@ -99,22 +100,19 @@ export class MqttService {
       if (message === null) { return }
       if (topic.includes('/file')) {
         try {
-          const output = pako.inflate(message, {to: 'string'})
-          // console.log(output)
-          let lines = output.split('\n')
-          lines.forEach((line) => {
-            if (line) {
-              this.nsLogs.next(Object.assign(JSON.parse(line), { file: true }))
-            }
-          })
-          this.gotLogFile = true
+          const msg = JSON.parse(message.toString())
+          const output = pako.inflate(msg.log, {to: 'string'})
+          if (msg.end) {
+            this.gotLogFile = true
+          }
+          this.nsLogs.next(output)
         } catch (err) {
-          console.error(err.stack)
+          console.error(err)
         }
       } else {
         const msg = JSON.parse(message.toString())
         if (topic.startsWith(`${environment.STAGE}/frontend/${this.getId()}/logs`)) {
-          this.nsLogs.next(msg)
+          this.nsLogs.next(msg.log)
         } else {
           for (const key in msg) {
             if (['result', 'userId', 'topic', 'id'].includes(key)) { continue }
@@ -196,15 +194,26 @@ export class MqttService {
 
   logRequest(worker, type) {
     this.gotLogFile = false
-    if (type === 'startLogStream') {
-      this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
-      this.client.subscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
-    } else {
-      this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`, null)
-      this.client.unsubscribe(`${environment.STAGE}/frontend/${this.getId()}/logs/${worker}/file`, null)
+    const logTopic = `${environment.STAGE}/frontend/${this.getId()}/logs/${worker}`
+    const payload = {
+      topic: logTopic,
+      [type]: {ns: `${worker}`}
     }
-    const payload = {[type]: {}}
-    this.sendMessage(`${environment.STAGE}/ns/${worker}`, payload)
+    if (type === 'startLogStream') {
+      if (!this.logStarted) {
+        this.logStarted = true
+        this.client.subscribe(logTopic, null)
+        this.client.subscribe(`${logTopic}/file`, null)
+        this.sendMessage(`${environment.STAGE}/workers`, payload)
+      }
+    } else if (type === 'stopLogStream'){
+      if (this.logStarted) {
+        this.logStarted = false
+        this.client.unsubscribe(logTopic, null)
+        this.client.unsubscribe(`${logTopic}/file`, null)
+        this.sendMessage(`${environment.STAGE}/workers`, payload)
+      }
+    }
   }
 
   oauthRequest(worker, params) {

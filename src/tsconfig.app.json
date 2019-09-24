@@ -3,10 +3,7 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "outDir": "../out-tsc/app",
-    "module": "es2015",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
   "exclude": [
     "src/test.ts",
