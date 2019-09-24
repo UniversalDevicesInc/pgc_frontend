@@ -157,7 +157,7 @@ export class MqttService {
 
     // nsUpdate incremental updates
     this.nsUpdate.subscribe(update => {
-      if (update !== null) {
+      if (update !== null && this.settingsService.currentIsy.value.hasOwnProperty['id']) {
         if (this.settingsService.currentIsy.value['id'] === update['id']) {
           delete update['id']
           const ns = Object.assign(this.settingsService.currentNodeServers.value, update)

@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service'
 import { LoggerService } from '../../services/logger.service'
 import { MqttService } from '../../services/mqtt.service'
 import { SettingsService } from '../../services/settings.service'
+import { environment } from '../../../environments/environment'
 
 @Component({
   selector: 'app-footer',
@@ -14,6 +15,8 @@ export class FooterComponent implements OnInit, OnDestroy {
 
   username: string
   currentIsy
+  version: string = environment.VERSION
+  stage: string = environment.STAGE
 
   constructor(
     public authService: AuthService,
