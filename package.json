@@ -10,6 +10,8 @@
     "build:prod": "ng build --prod --output-path=dist/frontend/prod; aws s3 sync --profile pgc-prod --delete --include=* dist/frontend/prod s3://polyglot-prod.isy.io/ --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers",
     "build:test": "ng build --configuration=test --output-path=dist/frontend/test; aws s3 sync --profile pgc-test --delete --include=* dist/frontend/test s3://pgtest.isy.io/ --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers",
     "update:run": "ncu -u; npm install",
+    "patchandrelease": "npm version patch --force",
+    "postversion": "git push && git push --tags",
     "update:check": "ncu",
     "build": "ng build",
     "test": "ng test",
