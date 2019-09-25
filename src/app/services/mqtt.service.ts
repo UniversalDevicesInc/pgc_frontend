@@ -63,7 +63,9 @@ export class MqttService {
     this.log(`Getting NodeServers from Store`)
     const headers = new HttpHeaders( { } )
     .set('Content-Type', 'application/json')
-    return this.http.get(`${environment.PG_URI}/api/store/list?cloud&sort`, { headers: headers })
+    let storeURL = `${environment.PG_URI}/api/store/list?cloud&sort`
+    if (environment.STAGE !== 'prod') storeURL += '&test'
+    return this.http.get(storeURL, { headers: headers })
       .pipe(catchError(this.handleError('getStore', [])))
   }
 
