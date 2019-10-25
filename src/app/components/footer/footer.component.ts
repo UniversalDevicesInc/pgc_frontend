@@ -17,6 +17,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   currentIsy
   version: string = environment.VERSION
   stage: string = environment.STAGE
+  year = new Date().getFullYear()
 
   constructor(
     public authService: AuthService,

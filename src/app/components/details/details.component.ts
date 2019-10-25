@@ -54,7 +54,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   @HostListener("window:beforeunload", ["$event"]) unloadHandler(event: Event) {
     console.log("Processing beforeunload...")
-    this.mqttService.logRequest(this.nodeServer.worker, 'stopLogStream')
+    if (this.nodeServer && this.nodeServer.hasOwnProperty('worker')) {
+      this.mqttService.logRequest(this.nodeServer.worker, 'stopLogStream')
+    }
     // Do more processing...
     // event.returnValue = false // popup are you sure?
   }
@@ -162,7 +164,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   removeCustom(key: string) {
-    const params = JSON.parse(JSON.stringify(this.customParams))
+    const params = this.customParams
     delete params[key]
     this.sendCustom(params)
   }
